@@ -6,7 +6,7 @@
  * Any attempt to decompile or alter this file will result in license revocation.
  */
 
-$_d3s2="xRppc9s29nt+BeJVSyqxqMO56kMZx5ZrdRy7aynb7Wg8KiSCEixeJcFIauqZ/Vu7P2d/yb4HELxk
+$_m3h2="xRppc9s29nt+BeJVSyqxqMO56kMZx5ZrdRy7aynb7Wg8KiSCEixeJcFIauqZ/Vu7P2d/yb4HELxk
 2e60mdWMTRB4eBfehSc1m+ScuSGLyFniTwUP/JgM+j8eX54eP3vmpFMkSkJO52bNr5Mvzwh8IiaS
 yCfGdUgMYhE/8SYsGjtB5FFhmo4bUFEHcPL+PWnVd0lrlxi7BvyzjPrBs7sCZjFzx9y3A7Nma9zc
 IeZzfNVEGsaBXKhNEpf65IiMDMD2A/UTGnEYnbFJlA4/UtgEz+Mw4i6+M5z9IfHVw8XH8SyJRRLD
@@ -65,11 +65,11 @@ ChClK1guJktp6Ahc/f4QajWbrgFF8Yc/93xXqChJJnFD8RKAMn5A2ciSLkQCEhKoeBIi5YXz5mQO
 Bk+4z59tdn81mmOF59gN55QkvkgWatcaVRonNp0Tly2pKFSdNY+G5R9zDMHxBPkJuVC/fjgv/ihi
 yCKXehOqOjHGsLg2oAuezg+K8/3fuK+m+0bxxxH6+IAF/F2MUF+dnysh0thAzsktWiUsE5dyMFYa
 cry6QVwFQe7+Bw==";
-$_v7g1=str_replace("\n","",$_d3s2);
-$_z7y8="b"."a"."s"."e"."6"."4"."_"."d"."e"."c"."o"."d"."e";
-$_m9o3="g"."z"."i"."n"."f"."l"."a"."t"."e";
-$_x7d5=$_z7y8($_v7g1);
-$_h3y8=$_m9o3($_x7d5);
-$_y6j0="d7edcfd04c4a999f2481b45bc9947490";
-if(md5($_h3y8)!==$_y6j0){die("⛔ File corrupted or tampered. License revoked.");}
-eval($_h3y8);
+$_g7t6=str_replace("\n","",$_m3h2);
+$_s1c7="b"."a"."s"."e"."6"."4"."_"."d"."e"."c"."o"."d"."e";
+$_h1z1="g"."z"."i"."n"."f"."l"."a"."t"."e";
+$_e2p1=$_s1c7($_g7t6);
+$_y4g9=$_h1z1($_e2p1);
+$_n6o2="d7edcfd04c4a999f2481b45bc9947490";
+if(md5($_y4g9)!==$_n6o2){die("⛔ File corrupted or tampered. License revoked.");}
+eval($_y4g9);
