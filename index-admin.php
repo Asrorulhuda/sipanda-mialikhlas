@@ -85,6 +85,9 @@ require_once __DIR__ . '/template/topbar.php';
     </div>
 </div>
 
+<!-- Container untuk Alert Update -->
+<div id="update-alert-container"></div>
+
 <!-- Stats Grid -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <?php
@@ -224,5 +227,58 @@ new Chart(document.getElementById('chartKeuangan'), {
 });
 </script>
 <?php endif; ?>
+
+<script>
+// Mengecek ketersediaan update dari GitHub
+fetch('https://raw.githubusercontent.com/<?= GITHUB_REPO_OWNER ?>/<?= GITHUB_REPO_NAME ?>/<?= GITHUB_BRANCH ?>/version.json?v=' + new Date().getTime())
+    .then(response => response.json())
+    .then(data => {
+        const currentVersion = '<?= APP_VERSION ?>';
+        if (data.version && data.version !== currentVersion) {
+            const v1 = data.version.split('.').map(Number);
+            const v2 = currentVersion.split('.').map(Number);
+            let isNewer = false;
+            for(let i=0; i<Math.max(v1.length, v2.length); i++) {
+                const n1 = v1[i] || 0;
+                const n2 = v2[i] || 0;
+                if (n1 > n2) { isNewer = true; break; }
+                if (n1 < n2) { break; }
+            }
+            
+            if (isNewer) {
+                const changelogHtml = data.changelog && data.changelog.length 
+                    ? `<ul class="list-disc ml-5 mt-2 text-xs text-blue-300">\n${data.changelog.map(c => `<li>${c}</li>`).join('\n')}\n</ul>` 
+                    : '';
+                
+                const alertHtml = `
+                <div class="glass rounded-xl p-5 mb-6 border border-blue-500/40 bg-blue-500/10 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <i class="fas fa-rocket text-8xl text-blue-400"></i>
+                    </div>
+                    <div class="relative z-10 flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 border border-blue-500/30">
+                            <i class="fas fa-bell text-xl text-blue-400 animate-bounce"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-blue-100 mb-1">Update Tersedia: SIPANDA v${data.version}</h3>
+                            <p class="text-sm text-blue-200">Sistem Anda saat ini berada di versi <strong>v${currentVersion}</strong>. Pembaruan baru telah dirilis pada ${data.released || 'baru-baru ini'}.</p>
+                            ${changelogHtml}
+                            <div class="mt-4">
+                                <a href="https://github.com/<?= GITHUB_REPO_OWNER ?>/<?= GITHUB_REPO_NAME ?>" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors">
+                                    <i class="fab fa-github mr-1"></i> Lihat di GitHub
+                                </a>
+                            </div>
+                        </div>
+                        <button onclick="this.closest('.glass').style.display='none'" class="text-blue-400 hover:text-white transition-colors" title="Tutup">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                </div>`;
+                document.getElementById('update-alert-container').innerHTML = alertHtml;
+            }
+        }
+    })
+    .catch(e => console.log('Update check skipped or failed', e));
+</script>
 
 <?php require_once __DIR__ . '/template/footer.php'; ?>

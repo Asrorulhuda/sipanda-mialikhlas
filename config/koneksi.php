@@ -15,7 +15,7 @@ $base_url = ($is_local) ? "/sipanda2/" : "/"; // Ganti "/" jika di hosting dilet
 
 define('BASE_URL', $base_url);
 define('APP_NAME', 'SIPANDA');
-define('APP_VERSION', '2.0.9.4');
+define('APP_VERSION', '2.0.9.5');
 define('GITHUB_REPO_OWNER', 'Asrorulhuda');
 define('GITHUB_REPO_NAME', 'sipanda-mialikhlas');
 define('GITHUB_BRANCH', 'main');
