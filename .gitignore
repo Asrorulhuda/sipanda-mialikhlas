@@ -1,0 +1,5 @@
+# SIPANDA Distribution - Auto Generated
+config/license.key
+database/backup_*.sql
+database/update_log.json
+database/_update_temp/

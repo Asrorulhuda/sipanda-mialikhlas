@@ -1,0 +1,26 @@
+# SIPANDA Production Configuration
+# ----------------------------------------------------------------------
+# 1. Disable Directory Listing
+# ----------------------------------------------------------------------
+Options -Indexes
+
+# ----------------------------------------------------------------------
+# 2. Disable PHP Error Display (for security)
+# ----------------------------------------------------------------------
+# php_flag display_errors Off
+# php_value error_reporting 2147483647
+
+# ----------------------------------------------------------------------
+# 3. Force HTTPS Redirect (Uncomment after SSL is active)
+# ----------------------------------------------------------------------
+# RewriteEngine On
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ----------------------------------------------------------------------
+# 4. Protect specific file extensions
+# ----------------------------------------------------------------------
+<FilesMatch "\.(sql|bak|inv|log|sh)$">
+    Order deny,allow
+    Deny from all
+</FilesMatch>

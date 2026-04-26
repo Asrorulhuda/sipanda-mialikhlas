@@ -1,0 +1,14 @@
+{
+    "version": "2.0.9.3",
+    "released": "2026-04-26",
+    "changelog": [
+        "penambahan login sidik jari 23"
+    ],
+    "min_php": "7.4",
+    "db_migrations": [],
+    "critical": true,
+    "build_type": "distribution",
+    "build_date": "2026-04-26 15:56:26",
+    "client": "MI AL IKHLAS",
+    "protected": true
+}

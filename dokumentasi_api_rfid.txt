@@ -1,0 +1,147 @@
+=======================================================
+     DOKUMENTASI ENDPOINT API MESIN RFID SIPANDA
+=======================================================
+
+BASE URL API:
+http://[IP_SERVER_ANDA]/api/rfid.php
+
+METODE HTTP YANG DIDUKUNG:
+GET atau POST
+
+DAFTAR PARAMETER GLOBAL:
+1. action  (Wajib) : Menentukan fungsi/jenis mesin.
+2. rfid    (Wajib) : Nomor Kartu (UID) yang di-tap ke mesin (berupa string HEX).
+
+-------------------------------------------------------
+DAFTAR LENGKAP ENDPOINT (ACTION) & FUNGSINYA:
+-------------------------------------------------------
+
+1. ABSENSI SISWA
+   Gunakan ini untuk mesin di gerbang masuk/kelas khusus siswa.
+   - Endpoint : /api/rfid.php?action=absen_siswa&rfid=[UID_KARTU]
+   - Response : JSON berisi status (masuk/keluar), nama siswa, dan jam absen.
+
+2. ABSENSI GURU
+   Gunakan ini untuk mesin presensi di Ruang Guru/Gerbang Utama.
+   - Endpoint : /api/rfid.php?action=absen_guru&rfid=[UID_KARTU]
+   - Response : JSON berisi status (masuk/keluar), nama guru, dan jam absen.
+
+3. CEK SALDO E-KANTIN
+   Gunakan ini untuk mesin informasi (Kiosk) Cek Saldo Siswa/Guru.
+   - Endpoint : /api/rfid.php?action=cek_saldo&rfid=[UID_KARTU]
+   - Response : JSON berisi sisa saldo jajan dan limit harian.
+
+4. BAYAR KANTIN / TRANSAKSI
+   Gunakan ini di mesin kasir kantin untuk memotong saldo.
+   - Endpoint : /api/rfid.php?action=bayar_kantin&rfid=[UID_KARTU]&nominal=[JUMLAH_TRANSAKSI]
+   - Response : JSON berisi nama, sisa saldo setelah potong, dan status sukses.
+
+5. KIOSK BUKU TAMU HUMAS
+   Gunakan untuk mesin tap tamu di lobi sekolah (Humas).
+   - Endpoint : /api/rfid.php?action=tamu_tap&rfid=[UID_KARTU]
+   - Response : JSON status check-out otomatis (jika masih di dalam) atau status new_visit.
+
+6. ANTREAN UKS
+   Gunakan untuk mesin cetak nomor antrean / tap periksa mandiri di UKS.
+   - Endpoint : /api/rfid.php?action=uks_tap&rfid=[UID_KARTU]
+   - Response : JSON pesan antrean UKS berhasil.
+
+7. KUNJUNGAN PERPUSTAKAAN
+   Gunakan untuk mesin absensi masuk/kunjungan ke ruangan perpustakaan.
+   - Endpoint : /api/rfid.php?action=lib_visit&rfid=[UID_KARTU]
+   - Response : JSON mencatat kunjungan harian perpus.
+
+8. TAP PEMINJAMAN PERPUSTAKAAN
+   Gunakan untuk mesin tap di meja pustakawan (Dashboard Admin Perpus).
+   - Endpoint : /api/rfid.php?action=lib_tap&rfid=[UID_KARTU]
+   - Response : JSON nama & role (untuk auto-fill peminjaman buku).
+
+-------------------------------------------------------
+CONTOH HTTP REQUEST DI ESP8266/ARDUINO:
+-------------------------------------------------------
+
+Jika IP Server SIPANDA adalah 192.168.1.10, dan UID kartu adalah "A1B2C3D4",
+maka ESP8266 harus melakukan HTTP GET ke:
+
+http://192.168.1.10/api/rfid.php?action=absen_siswa&rfid=A1B2C3D4
+
+-------------------------------------------------------
+SOURCE CODE ESP8266 / C++ (TINGGAL COPY PASTE)
+-------------------------------------------------------
+/*
+ * Rangkaian PIN ESP8266 ke MFRC522:
+ * 3.3V -> 3.3V, GND -> GND
+ * RST -> D3, SDA(SS) -> D4, MOSI -> D7, MISO -> D6, SCK -> D5
+ */
+
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+#include <SPI.h>
+#include <MFRC522.h>
+
+const char* ssid = "WIFI_SEKOLAH";
+const char* password = "PASSWORD_WIFI";
+String apiUrl = "http://192.168.1.100/sipanda2/api/rfid.php";
+
+// Ganti sesuai jenis mesin: absen_siswa, cek_saldo, dll.
+String actionMesin = "absen_siswa"; 
+
+#define RST_PIN 0  // D3
+#define SS_PIN  2  // D4
+#define BUZZER  5  // D1 (Opsional, untuk Buzzer)
+
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+void setup() {
+  Serial.begin(115200);
+  SPI.begin();
+  mfrc522.PCD_Init();
+  pinMode(BUZZER, OUTPUT);
+  digitalWrite(BUZZER, LOW);
+
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) delay(500);
+  Serial.println("Mesin Siap!");
+}
+
+void loop() {
+  if (!mfrc522.PICC_IsNewCardPresent() || !mfrc522.PICC_ReadCardSerial()) return;
+
+  String rfid_uid = "";
+  for (byte i = 0; i < mfrc522.uid.size; i++) {
+    rfid_uid += String(mfrc522.uid.uidByte[i] < 0x10 ? "0" : "");
+    rfid_uid += String(mfrc522.uid.uidByte[i], HEX);
+  }
+  rfid_uid.toUpperCase();
+
+  digitalWrite(BUZZER, HIGH); delay(100); digitalWrite(BUZZER, LOW);
+  kirimDataKeServer(rfid_uid);
+
+  mfrc522.PICC_HaltA();
+  mfrc522.PCD_StopCrypto1();
+  delay(1000); 
+}
+
+void kirimDataKeServer(String rfid_uid) {
+  if (WiFi.status() == WL_CONNECTED) {
+    WiFiClient client; HTTPClient http;
+    String url = apiUrl + "?action=" + actionMesin + "&rfid=" + rfid_uid;
+    http.begin(client, url);
+    if (http.GET() > 0) {
+      Serial.println(http.getString());
+      digitalWrite(BUZZER, HIGH); delay(100); digitalWrite(BUZZER, LOW);
+      delay(50);
+      digitalWrite(BUZZER, HIGH); delay(100); digitalWrite(BUZZER, LOW);
+    } else {
+      digitalWrite(BUZZER, HIGH); delay(1000); digitalWrite(BUZZER, LOW);
+    }
+    http.end();
+  }
+}
+
+-------------------------------------------------------
+CATATAN TAMBAHAN:
+- Pastikan modul terkait sudah "Aktif" di Pengaturan Lisensi Superadmin, jika fitur mati, API akan membalas dengan status Error (Fitur Tidak Tersedia).
+- Semua transaksi yang memotong limit/saldo atau mencatat jam otomatis mencatat timestamp server.
+=======================================================

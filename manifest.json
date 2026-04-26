@@ -1,0 +1,42 @@
+{
+    "name": "SIPANDA School Management",
+    "short_name": "SIPANDA",
+    "description": "Sistem Informasi Pokok Pendidikan dan Akademika",
+    "start_url": "/sipanda2/index.php",
+    "display": "standalone",
+    "background_color": "#0a1628",
+    "theme_color": "#0a1628",
+    "icons": [
+        {
+            "src": "assets/img/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "assets/img/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "orientation": "portrait",
+    "scope": "/sipanda2/",
+    "categories": ["education", "finance"],
+    "shortcuts": [
+        {
+            "name": "Dashboard",
+            "short_name": "Home",
+            "description": "Buka Dashboard SIPANDA",
+            "url": "/sipanda2/",
+            "icons": [{"src": "assets/img/icon-192.png", "sizes": "192x192"}]
+        },
+        {
+            "name": "Absensi",
+            "short_name": "Absen",
+            "description": "Buka Absensi SIPANDA",
+            "url": "/sipanda2/admin/absensi_siswa.php",
+            "icons": [{"src": "assets/img/icon-192.png", "sizes": "192x192"}]
+        }
+    ]
+}
